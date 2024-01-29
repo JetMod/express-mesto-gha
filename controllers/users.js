@@ -6,6 +6,7 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
+// извлекает всех пользователей из бд
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
@@ -14,6 +15,7 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+// находит пользователя в базе данных по его id
 module.exports.getUserMe = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -35,6 +37,7 @@ module.exports.getUserMe = (req, res, next) => {
     });
 };
 
+// создает нового пользователя в bd
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -66,6 +69,7 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
+// обновляет данные пользователя
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
@@ -86,6 +90,7 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
+// обновляет аватар пользователя
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
@@ -106,6 +111,7 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
+// обрабатывает процесс аутентификации пользователя
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
@@ -125,6 +131,7 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
+// возвращает информацию о текущем зарег. пользователе
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
