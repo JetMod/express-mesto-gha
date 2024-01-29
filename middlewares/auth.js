@@ -3,14 +3,13 @@ const IncorrectError = require('../errors/incorrectError');
 
 const auth = (req, res, next) => {
   const token = req.cookies.jwt;
-  let payload;
   try {
-    payload = jwt.verify(token, 'secret-key');
+    const payload = jwt.verify(token, 'secret-key');
+    req.user = payload;
+    return next();
   } catch (err) {
     throw new IncorrectError('Необходима авторизация');
   }
-  req.user = payload;
-  return next();
 };
 
 module.exports = auth;
