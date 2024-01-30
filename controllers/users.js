@@ -6,11 +6,13 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
+const { OK, SUCCESS } = require('../constants/constants');
+
 // извлекает всех пользователей из бд
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(200).send(users);
+      res.status(OK).send(users);
     })
     .catch(next);
 };
@@ -24,7 +26,7 @@ const getUserMe = (req, res, next) => {
           'Пользователь не найден.',
         );
       }
-      res.status(200).send(user);
+      res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -51,7 +53,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }).then((user) => {
-      res.status(201).send({
+      res.status(SUCCESS).send({
         name: user.name,
         about: user.about,
         avatar: user.avatar,
@@ -80,7 +82,7 @@ const updateUser = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.status(200).send({ name: user.name, about: user.about }))
+    .then((user) => res.status(OK).send({ name: user.name, about: user.about }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
@@ -101,7 +103,7 @@ const updateAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.status(200).send({ avatar: user.avatar }))
+    .then((user) => res.status(OK).send({ avatar: user.avatar }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
@@ -125,7 +127,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .status(200)
+        .status(OK)
         .send({ message: 'Вы авторизованы' });
     })
     .catch(next);
@@ -139,7 +141,7 @@ const getCurrentUser = (req, res, next) => {
         'Пользователь не найден',
       );
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id'));

@@ -1,7 +1,9 @@
+const { SERVER_BAD_REQUEST_CODE } = require('../constants/constants');
+
 class ServerError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 500;
+    this.statusCode = SERVER_BAD_REQUEST_CODE;
   }
 }
 

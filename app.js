@@ -17,6 +17,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const { SERVER_BAD_REQUEST_CODE } = require('./constants/constants');
+
 // Авторизация
 app.post('/signin', validateUser, login);
 app.post('/signup', validateUser, createUser);
@@ -32,8 +34,8 @@ app.use('*', (req, res) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  const status = err.statusCode || 500;
-  const message = err.statusCode === 500 ? 'Произошла неизвестная ошибка на сервере' : err.message;
+  const status = err.statusCode || SERVER_BAD_REQUEST_CODE;
+  const message = err.statusCode === SERVER_BAD_REQUEST_CODE ? 'Произошла неизвестная ошибка на сервере' : err.message;
 
   res.status(status).send({ message });
   next();

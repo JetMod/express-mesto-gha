@@ -3,12 +3,13 @@ const ServerError = require('../errors/ServerError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const { OK, SUCCESS } = require('../constants/constants');
 
 // получение всех карточек
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.status(200).send(cards);
+      res.status(OK).send(cards);
     })
     .catch(() => {
       next(new ServerError());
@@ -21,7 +22,7 @@ const createCard = (req, res, next) => {
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send({
+    .then((card) => res.status(SUCCESS).send({
       name: card.name,
       link: card.link,
       owner: card.owner,
@@ -45,7 +46,7 @@ const deleteCard = (req, res, next) => {
     .then(({ owner }) => {
       if (owner.toString() === req.user._id) {
         Card.findByIdAndDelete(req.params.id).then((card) => {
-          res.status(200).send(card);
+          res.status(OK).send(card);
         });
       } else {
         throw new ForbiddenError('Нет прав для удаления этой карточки');
@@ -71,7 +72,7 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      res.status(200).send(card);
+      res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -93,7 +94,7 @@ const dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      res.status(200).send(card);
+      res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
