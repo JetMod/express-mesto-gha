@@ -4,6 +4,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 
+// получение всех карточек
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
@@ -14,6 +15,7 @@ const getCards = (req, res, next) => {
     });
 };
 
+// создание карточек
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
@@ -34,6 +36,7 @@ const createCard = (req, res, next) => {
     });
 };
 
+// удаление карточек
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
     .orFail(() => {
@@ -57,6 +60,7 @@ const deleteCard = (req, res, next) => {
     });
 };
 
+// обновляет карточку, добавляя id пользователя в массив likes
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
@@ -78,6 +82,7 @@ const likeCard = (req, res, next) => {
     });
 };
 
+// удаляет id пользователя из массива likes
 const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
