@@ -1,4 +1,4 @@
-const OK = 201;
+const OK = 200;
 const SUCCESS = 201;
 const NOT_FOUND_ERROR = 404;
 const SERVER_BAD_REQUEST_CODE = 500;
