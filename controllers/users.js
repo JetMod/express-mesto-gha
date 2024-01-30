@@ -6,8 +6,7 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
-// извлекает всех пользователей из бд
-module.exports.getUsers = (req, res, next) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.status(200).send(users);
@@ -15,8 +14,7 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
-// находит пользователя в базе данных по его id
-module.exports.getUserMe = (req, res, next) => {
+const getUserMe = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
@@ -37,8 +35,7 @@ module.exports.getUserMe = (req, res, next) => {
     });
 };
 
-// создает нового пользователя в bd
-module.exports.createUser = (req, res, next) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -69,8 +66,7 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-// обновляет данные пользователя
-module.exports.updateUser = (req, res, next) => {
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -90,8 +86,7 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-// обновляет аватар пользователя
-module.exports.updateAvatar = (req, res, next) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -111,8 +106,7 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
-// обрабатывает процесс аутентификации пользователя
-module.exports.login = (req, res, next) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -131,8 +125,7 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
-// возвращает информацию о текущем зарег. пользователе
-module.exports.getCurrentUser = (req, res, next) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
       throw new NotFoundError(
@@ -147,4 +140,14 @@ module.exports.getCurrentUser = (req, res, next) => {
         next(err);
       }
     });
+};
+
+module.exports = {
+  getUsers,
+  getUserMe,
+  createUser,
+  updateUser,
+  updateAvatar,
+  login,
+  getCurrentUser,
 };

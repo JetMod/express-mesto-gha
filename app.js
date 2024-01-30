@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 
 const bodyParser = require('body-parser');
 
-const { PORT = 3000 } = process.env;
 const app = express();
+const PORT = process.env.PORT || 3000;
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const { login, createUser } = require('./controllers/users');
@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// авторизация
+// Авторизация
 app.post('/signin', validateUser, login);
 app.post('/signup', validateUser, createUser);
 
