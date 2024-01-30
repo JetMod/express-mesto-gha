@@ -35,7 +35,7 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   const status = err.statusCode || SERVER_BAD_REQUEST_CODE;
-  const message = err.statusCode === SERVER_BAD_REQUEST_CODE ? 'Произошла неизвестная ошибка на сервере' : err.message;
+  const message = err.statusCode === SERVER_BAD_REQUEST_CODE ? 'На сервере произошла ошибка' : err.message;
 
   res.status(status).send({ message });
   next();

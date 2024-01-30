@@ -49,7 +49,7 @@ const deleteCard = (req, res, next) => {
           res.status(OK).send(card);
         });
       } else {
-        throw new ForbiddenError('Нет прав для удаления этой карточки');
+        throw new ForbiddenError('Попытка удалить чужую карточку');
       }
     })
     .catch((err) => {
