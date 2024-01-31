@@ -2,22 +2,37 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
-
+const cors = require('cors');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-mongoose.connect('mongodb://localhost:27017/mestodb');
+
+const corsOptions1 = {
+  origin: '*',
+};
+
+app.use(cors(corsOptions1));
 
 const { login, createUser } = require('./controllers/users');
 const { validateUser } = require('./validate/validate');
 const auth = require('./middlewares/auth');
 
-app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { SERVER_BAD_REQUEST_CODE } = require('./constants/constants');
+const errorMiddleware = require('./middlewares/error');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+app.use(requestLogger);
+app.use(cookieParser());
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 // Авторизация
 app.post('/signin', validateUser, login);
@@ -31,16 +46,19 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Страница не найдена' });
 });
 
-app.use(errors());
+app.use(errorLogger); // подключаем логгер ошибок
 
-app.use((err, req, res, next) => {
-  const status = err.statusCode || SERVER_BAD_REQUEST_CODE;
-  const message = err.statusCode === SERVER_BAD_REQUEST_CODE ? 'На сервере произошла ошибка' : err.message;
+app.use(errors()); // обработчик ошибок celebrate
+app.use(errorMiddleware);
 
-  res.status(status).send({ message });
-  next();
-});
+async function main() {
+  await mongoose.connect('mongodb://127.0.0.1/mestodb', {
+    useNewUrlParser: true,
+  }).catch((err) => console.log(err));
+  console.log('Connected to db');
+  await app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`Сервер открыт на порту: ${PORT}`);
-});
+main();
